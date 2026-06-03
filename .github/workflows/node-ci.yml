@@ -4,6 +4,10 @@ on:
   push:
     branches: ["main"]
 
+permissions:
+  content: read
+  packages: write
+
 jobs:
   build:
     
@@ -32,15 +36,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       
-      - name: Log in to Docker Hub
+      - name: Log in to GHCR
         uses: docker/login-action@v4
         with:
-          username: ${{secrets.DOCKER_USERNAME}}
-          password: ${{secrets.DOCKER_PASSWORD}}
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
 
       - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{secrets.DOCKER_USERNAME}}/github-action:latest
+          tags: ghcr.io/shrikantkumar975/github-action:latest
